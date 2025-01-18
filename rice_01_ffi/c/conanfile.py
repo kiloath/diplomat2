@@ -1,3 +1,5 @@
+import os
+import subprocess
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 
@@ -30,6 +32,13 @@ class demo01_runRecipe(ConanFile):
         tc.generate()
 
     def build(self):
+        rust_build_args = "--release" if self.settings.build_type == "Release" else "--"
+        rust_source_dir = os.path.abspath(os.path.join(self.source_folder, "..", ".."))
+        subprocess.run(
+            ["cargo", "build", "-p", "rice_01_ffi", rust_build_args],
+            check=True,
+            cwd=rust_source_dir,
+        )
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
